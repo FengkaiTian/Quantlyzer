@@ -1,0 +1,76 @@
+---
+title: "Untitled"
+author: "tfk"
+date: '2023-03-12'
+output:
+  word_document: default
+  pdf_document: default
+  html_document: default
+---
+
+```{r, echo = FALSE, message=FALSE}
+
+rm(list=ls())
+library("e1071")
+library("caret")
+library("dplyr")
+library("robustHD")
+img <- readxl::read_excel("C:/Users/ft7b6/Downloads/data22.xlsx")
+
+a <- img %>% filter(Field == "6_1")
+b <- img %>% filter(Field == "6_3")
+c <- img %>% filter(Field == "8_1")
+
+
+
+set.seed(12345)
+data  <- img[,c(4,6,8,10,12,14,16,18)]
+
+new_img <- data
+
+
+
+new_img[which(new_img$mean_D2 <= 2.2),]$mean_D2 = 1
+new_img[which(new_img$mean_D2 < 3 & new_img$mean_D2 > 2.2),]$mean_D2 = 2
+new_img[which(new_img$mean_D2 < 5 & new_img$mean_D2 >= 3),]$mean_D2 = 3
+############### We need to normalize the data#########################
+
+
+
+
+
+img <- new_img
+
+
+img$mean_D2 <- floor(img$mean_D2)
+data <- img
+
+
+data$mean_D2 %>% table()
+
+
+install.packages("C:/Users/ft7b6/OneDrive/Desktop/Quantlyzer", repos = NULL, type="source")
+
+library(Quantlyzer)
+
+
+
+a1_start = Sys.time()
+a1 <- stat_ml(img,
+        pos_X = c(2:8),
+        pos_y = 1,
+        objective = 'class',
+        na_method = 'omit'
+)
+a1_end = Sys.time()
+
+
+
+
+
+
+
+
+a1 %>% print()
+```
+

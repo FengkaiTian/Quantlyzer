@@ -1,0 +1,10 @@
+Package: Quantlyzer
+Type: Package
+Title: A pipeline of automatically exploratory data analysis (ML foucs)
+Version: 0.1.0
+Author: Fengkai Tian
+Maintainer: Fengkai Tian<ft7b6@umsystem.edu>
+Description: A workflow pipeline of exploratory analytics that contains various popular descriptive analysis techniques
+License: GPL-3
+Encoding: UTF-8
+Imports: dplyr, readr, randomForest, e1071, readxl, xgboost, mice, neuralnet, glmnet, VIM, car, Metrics, psych, rpart, rpart.plot, caret, ggplot2, corrplot, lightgbm, automl, class, factoextra, adabag, autokeras
