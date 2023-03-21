@@ -1454,7 +1454,9 @@ automl_rg_scale <- function(data, order, trans_method){
 
 
 #######################################################################W##
-
+#' My function description
+#'
+#' @export
 
 all_reg_together_scaled <- function(data, pos_X, pos_y, method, trans_method){
   data <- data_selection(data, pos_X, pos_y, method)
@@ -2551,15 +2553,15 @@ xgboost_scale <- function(data, order,trans_method){
     recall <- rbind(recall, result_matrix$Recall)
     f1 <- rbind(f1, result_matrix$F1)
 
-    paste('Random Forest Accuracy :', confusion_matrix$overall[1]) %>% print()
+    paste('XGB Accuracy :', confusion_matrix$overall[1]) %>% print()
     print("      ")
     print(" __________________________ ")
     print("      ")
-    paste('Random Forest p_value :', confusion_matrix$overall[6]) %>% print()
+    paste('XGB p_value :', confusion_matrix$overall[6]) %>% print()
     print("      ")
     print(" __________________________ ")
     print("      ")
-    paste('Random Forest Class_Result : ') %>% print()
+    paste('XGB Class_Result : ') %>% print()
     result_matrix %>% print()
   }
   mean_f1 <- apply(f1, 2, mean) %>% matrix(nrow = 1)

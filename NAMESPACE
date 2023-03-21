@@ -3,6 +3,7 @@
 export(all_class_together)
 export(all_class_together_scaled)
 export(all_reg_together)
+export(all_reg_together_scaled)
 export(automl_cv)
 export(automl_rg_scale)
 export(class_KNN)
