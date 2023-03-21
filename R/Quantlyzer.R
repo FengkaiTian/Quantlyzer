@@ -33,7 +33,11 @@
 
 .onLoad()
 
-###########################################
+
+#' My function description
+#'
+#' @export
+
 
 drop_na <- function(data, method){
   data <- apply(data, 2, as.numeric)
@@ -62,6 +66,11 @@ drop_na <- function(data, method){
   return(data)
 } # method = c('omit', 'mean', 'median', 'mode)
 
+
+
+#' My function description
+#'
+#' @export
 data_selection <- function(data, pos_X, pos_y, method){
   data_X <- data %>% select(pos_X)
   data_y <- data %>% select(pos_y)
@@ -72,6 +81,11 @@ data_selection <- function(data, pos_X, pos_y, method){
   drop_na(data, method)
 }
 
+
+#' My function description
+#'
+#' @export
+
 data_into_five <- function(data){
   divid_number <- nrow(data)
   divid_number_20 <- floor(divid_number / 5)
@@ -81,6 +95,11 @@ data_into_five <- function(data){
                            first_4[5]:nrow(data))
   return(divid_5_position)
 }
+
+
+#' My function description
+#'
+#' @export
 coefficient_of_determination <- function(true, pred){
   rss <- sum((pred - mean(true)) ** 2)
   tss <- sum((true - mean(true)) ** 2)
@@ -88,6 +107,11 @@ coefficient_of_determination <- function(true, pred){
   return(rsq)
 }
 
+
+
+#' My function description
+#'
+#' @export
 dist_plot <- function(data){
   print("HIST PLOT; Factor Var ONLY")
   new_data = data2[,which(sapply(data2, is.factor))]
@@ -99,6 +123,11 @@ dist_plot <- function(data){
             guides(fill = guide_legend(title = colnames(new_data)[i])))
   }
 }
+
+
+#' My function description
+#'
+#' @export
 violin_plot <- function(data){
   print("VIOLIN PLOT; Numerical Var ONLY")
   data = apply(data, 2, as.numeric) %>% as.data.frame()
@@ -124,6 +153,10 @@ violin_plot <- function(data){
 }
 
 
+
+#' My function description
+#'
+#' @export
 visual_summary1 <- function(data){
   fake_data <- apply(data, 2, as.numeric)
   fake_data_get_nonnum <- which(apply(fake_data, 2, is.na)  == TRUE, arr.ind = TRUE)
@@ -142,6 +175,10 @@ visual_summary1 <- function(data){
 }
 
 
+
+#' My function description
+#'
+#' @export
 get_info <- function(data){
   set.seed(123)
   ord = sample(1:nrow(data), nrow(data), replace = FALSE)
@@ -171,7 +208,9 @@ get_info <- function(data){
 
 
 #######################################################
-
+#' My function description
+#'
+#' @export
 llm <- function(data, order){
   linear_m <- lm(unlist(data[ncol(data)])  %>% as.numeric() ~ ., data = data[,1:ncol(data) - 1])
   print("~")
@@ -217,7 +256,9 @@ llm <- function(data, order){
 }
 
 #######################################################
-
+#' My function description
+#'
+#' @export
 lss0 <- function(data, order){
   set.seed(123)
   y = data[,ncol(data)]
@@ -269,7 +310,9 @@ lss0 <- function(data, order){
 
 #lsso
 #####################################################
-
+#' My function description
+#'
+#' @export
 ridgee <- function(data, order){
   set.seed(123)
   y = data[,ncol(data)]
@@ -323,6 +366,10 @@ ridgee <- function(data, order){
 
 
 #######################################################
+
+#' My function description
+#'
+#' @export
 rf_reg <- function(data, order){
   set.seed(123)
   oooorder = sample(1:nrow(data), floor(0.75 * nrow(data)), replace = FALSE)
@@ -388,6 +435,10 @@ rf_reg <- function(data, order){
 
 
 ##########################################################
+
+#' My function description
+#'
+#' @export
 xgboost123 <- function(data, order){
   pearson_cor = c()
   xxx = c()
@@ -484,6 +535,10 @@ xgboost123 <- function(data, order){
 
 
 ############################################################
+
+#' My function description
+#'
+#' @export
 
 
 lightgbm123 <- function(data, order){
@@ -623,6 +678,9 @@ lightgbm123 <- function(data, order){
 
 ####################################################
 #automl_for_reg
+#' My function description
+#'
+#' @export
 automl_cv <- function(data, order){
   set.seed(123)
   pearson_cor = c()
@@ -681,7 +739,9 @@ automl_cv <- function(data, order){
 
 
 
-
+#' My function description
+#'
+#' @export
 all_reg_together <- function(data, pos_X, pos_y, method){
   data <- data_selection(data,  pos_X, pos_y, method)
   order = data_into_five(data)
@@ -753,6 +813,9 @@ all_reg_together <- function(data, pos_X, pos_y, method){
 }
 
 #################################################################
+#' My function description
+#'
+#' @export
 llm_rg_scale <- function(data, order, trans_method){
   linear_m <- lm(unlist(data[ncol(data)])  %>% as.numeric() ~ ., data = data[,1:ncol(data) - 1])
   print("~")
@@ -821,6 +884,9 @@ llm_rg_scale <- function(data, order, trans_method){
 }
 
 #################################################################
+#' My function description
+#'
+#' @export
 lss0_rg_scale <- function(data, order,  trans_method){
   set.seed(123)
 
@@ -884,6 +950,9 @@ lss0_rg_scale <- function(data, order,  trans_method){
 
 
 #################################################################
+#' My function description
+#'
+#' @export
 ridgee_rg_scale <- function(data, order,  trans_method){
   set.seed(123)
   train_label = data[,ncol(data)]
@@ -946,6 +1015,9 @@ ridgee_rg_scale <- function(data, order,  trans_method){
 }
 
 #################################################################
+#' My function description
+#'
+#' @export
 rf_rg_scale <- function(data, order, trans_method){
 
   set.seed(123)
@@ -1032,6 +1104,9 @@ rf_rg_scale <- function(data, order, trans_method){
 
 
 #################################################################
+#' My function description
+#'
+#' @export
 xgboost_rg_scale <- function(data, order, trans_method){
   pearson_cor = c()
   xxx = c()
@@ -1148,6 +1223,9 @@ xgboost_rg_scale <- function(data, order, trans_method){
 }
 
 #################################################################
+#' My function description
+#'
+#' @export
 lightgbm_rg_scale <- function(data, order, trans_method){
   pearson_cor = c()
   xxx = c()
@@ -1303,6 +1381,9 @@ lightgbm_rg_scale <- function(data, order, trans_method){
 }
 
 #################################################################
+#' My function description
+#'
+#' @export
 automl_rg_scale <- function(data, order, trans_method){
 
   pearson_cor = c()
@@ -1465,7 +1546,9 @@ all_reg_together_scaled <- function(data, pos_X, pos_y, method, trans_method){
 
 
 
-
+#' My function description
+#'
+#' @export
 
 kme_pca <- function(data){
   pca <- prcomp(data[1:(ncol(data)-1)], scale = TRUE)
@@ -1501,6 +1584,9 @@ kme_pca <- function(data){
 
 
 ####################################################################
+#' My function description
+#'
+#' @export
 class_KNN <- function(data, order){
   lv = levels(as.factor(unlist(data[ncol(data)])))
   acc = c()
@@ -1545,7 +1631,9 @@ class_KNN <- function(data, order){
 }
 
 ##############################################
-
+#' My function description
+#'
+#' @export
 class_naive <- function(data, order){
   lv = levels(as.factor(unlist(data[ncol(data)])))
   acc = c()
@@ -1590,7 +1678,9 @@ class_naive <- function(data, order){
 }
 
 ##############################################
-
+#' My function description
+#'
+#' @export
 class_svm <- function(data, order){
   lv = levels(as.factor(unlist(data[ncol(data)])))
   acc = c()
@@ -1637,6 +1727,9 @@ class_svm <- function(data, order){
 
 
 #########################################
+#' My function description
+#'
+#' @export
 class_rf <- function(data, order){
   set.seed(123)
   oooorder = sample(1:nrow(data), floor(0.75 * nrow(data)), replace = FALSE)
@@ -1710,6 +1803,9 @@ class_rf <- function(data, order){
 ######################################################
 
 # change the class to zero
+#' My function description
+#'
+#' @export
 
 xgboost123 <- function(data, order){
   acc = c()
@@ -1820,6 +1916,10 @@ xgboost123 <- function(data, order){
 
 ################################################################################################
 # class adaboost
+
+#' My function description
+#'
+#' @export
 class_adabst <- function(data, order){
   set.seed(123)
   oooorder = sample(1:nrow(data), floor(0.75 * nrow(data)), replace = FALSE)
@@ -1884,7 +1984,9 @@ class_adabst <- function(data, order){
 
 ###############################################################
 #tree_stat
-
+#' My function description
+#'
+#' @export
 tree_stat2 <- function(data){
   r_tree_stat <- rpart(unlist(data[ncol(data)])  %>% as.numeric() ~ ., data = data[,1:ncol(data) - 1], method = 'class')
   r_tree_stat %>% printcp()
@@ -1893,6 +1995,10 @@ tree_stat2 <- function(data){
 }
 # tree
 ##########################################################
+
+#' My function description
+#'
+#' @export
 keras_class <- function(data, order){
   lv = levels(as.factor(unlist(data[ncol(data)])))
   acc = c()
@@ -1952,6 +2058,10 @@ keras_class <- function(data, order){
 
 
 #######################
+
+#' My function description
+#'
+#' @export
 print_result <- function(KNN_result, naive_result, svm_result, rf_result, xgb_result, adab_result, keras_result ){
   # build a empty data frame to save the result
   acc_and_p <- matrix(ncol = 2, nrow = 0)
@@ -2024,6 +2134,10 @@ print_result <- function(KNN_result, naive_result, svm_result, rf_result, xgb_re
   names(scx) <- c("Accuracy & p-value", "F1-Value", "Precision", "Recall")
   return(scx)
 }
+
+#' My function description
+#'
+#' @export
 all_class_together <- function(data, pos_X, pos_y, method){
   data <- data_selection(img, 2:8, 1, 'omit')
 
@@ -2037,7 +2151,7 @@ all_class_together <- function(data, pos_X, pos_y, method){
   adab_result <- class_adabst(data, order)
   keras_result <- keras_class(data, order)
 
-   <- print_result(KNN_result, naive_result, svm_result, rf_result, xgb_result, adab_result, keras_result)
+  result <- print_result(KNN_result, naive_result, svm_result, rf_result, xgb_result, adab_result, keras_result)
   kme_pca(data) %>% print()
   return(result)
 }
@@ -2045,6 +2159,10 @@ all_class_together <- function(data, pos_X, pos_y, method){
 
 
 ####################################################################
+
+#' My function description
+#'
+#' @export
 class_KNN_scale <- function(data, order, trans_method){
   lv = levels(as.factor(unlist(data[ncol(data)])))
   acc = c()
@@ -2106,6 +2224,10 @@ class_KNN_scale <- function(data, order, trans_method){
 
 
 ##############################################
+
+#' My function description
+#'
+#' @export
 class_naive_scale <- function(data, order, trans_method){
   lv = levels(as.factor(unlist(data[ncol(data)])))
   acc = c()
@@ -2160,6 +2282,10 @@ class_naive_scale <- function(data, order, trans_method){
 
 
 ##############################################
+
+#' My function description
+#'
+#' @export
 class_svm_scale <- function(data, order, trans_method){
   lv = levels(as.factor(unlist(data[ncol(data)])))
   acc = c()
@@ -2217,6 +2343,10 @@ class_svm_scale <- function(data, order, trans_method){
 
 
 #########################################
+
+#' My function description
+#'
+#' @export
 class_rf_scale <- function(data, order,trans_method){
   set.seed(123)
   oooorder = sample(1:nrow(data), floor(0.75 * nrow(data)), replace = FALSE)
@@ -2296,6 +2426,11 @@ class_rf_scale <- function(data, order,trans_method){
 
 
 #################################################
+
+
+#' My function description
+#'
+#' @export
 tree_stat <- function(data){
   r_tree_stat <- rpart(unlist(data[ncol(data)])  %>% as.numeric() ~ ., data = data[,1:ncol(data) - 1], method = 'class')
   r_tree_stat %>% printcp()
@@ -2304,6 +2439,11 @@ tree_stat <- function(data){
 }
 ######################################################
 
+
+
+#' My function description
+#'
+#' @export
 # change the class to zero
 xgboost_scale <- function(data, order,trans_method){
   acc = c()
@@ -2432,6 +2572,10 @@ xgboost_scale <- function(data, order,trans_method){
 }
 
 ################################################################################################
+
+#' My function description
+#'
+#' @export
 # class adaboost
 class_adabst_scale <- function(data, order, trans_method){
   set.seed(123)
@@ -2515,6 +2659,10 @@ class_adabst_scale <- function(data, order, trans_method){
 
 ############################################################################
 
+#' My function description
+#'
+#' @export
+
 keras_class_scale <- function(data, order, trans_method){
   lv = levels(as.factor(unlist(data[ncol(data)])))
   acc = c()
@@ -2585,6 +2733,10 @@ keras_class_scale <- function(data, order, trans_method){
 
 
 #######################
+
+#' My function description
+#'
+#' @export
 print_result <- function(KNN_result, naive_result, svm_result, rf_result, xgb_result, adab_result, keras_result){
   # build a empty data frame to save the result
   acc_and_p <- matrix(ncol = 2, nrow = 0)
@@ -2658,7 +2810,9 @@ print_result <- function(KNN_result, naive_result, svm_result, rf_result, xgb_re
 }
 
 
-
+#' My function description
+#'
+#' @export
 
 all_class_together_scaled <- function(data, pos_X, pos_y, method, scale_method){
   data <- data_selection(data, pos_X, pos_y, method)
@@ -2677,7 +2831,9 @@ all_class_together_scaled <- function(data, pos_X, pos_y, method, scale_method){
 
 
 
-
+#' My function description
+#'
+#' @export
 
 
 stat_ml <- function(data, pos_X, pos_y, objective, na_method, scale_method = NULL){

@@ -8,3 +8,4 @@ Description: A workflow pipeline of exploratory analytics that contains various 
 License: GPL-3
 Encoding: UTF-8
 Imports: dplyr, readr, randomForest, e1071, readxl, xgboost, mice, neuralnet, glmnet, VIM, car, Metrics, psych, rpart, rpart.plot, caret, ggplot2, corrplot, lightgbm, automl, class, factoextra, adabag, autokeras
+RoxygenNote: 7.2.3
