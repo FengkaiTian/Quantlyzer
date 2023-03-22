@@ -233,7 +233,7 @@ llm <- function(data, order){
     pred = predict(mod1, newdata = test_data[,1:ncol(test_data) - 1]) %>% as.numeric()
     true = unlist(test_data[ncol(test_data)]) %>% as.numeric()
     pearson_cor <- c(pearson_cor, cor(pred, true))
-    r_2 <- c(r_2, coefficient_of_determination(pred, true))
+    r_2 <- c(r_2, coefficient_of_determination(true, pred))
     rmseee <- c(rmseee, rmse(true, pred))
     maeee <- c(maeee, mae(true, pred))
   }
@@ -286,7 +286,7 @@ lss0 <- function(data, order){
     pred = predict(mod2_cl, newx = test_data_X) %>% as.numeric()
     true = unlist(test_data_y) %>% as.numeric()
     pearson_cor <- c(pearson_cor, cor(pred, true))
-    r_2 <- c(r_2, coefficient_of_determination(pred, true))
+    r_2 <- c(r_2, coefficient_of_determination(true, pred))
     rmseee <- c(rmseee, rmse(true, pred))
     maeee <- c(maeee, mae(true, pred))
   }
@@ -340,7 +340,7 @@ ridgee <- function(data, order){
     pred = predict(mod3_cl, newx = test_data_X) %>% as.numeric()
     true = unlist(test_data_y) %>% as.numeric()
     pearson_cor <- c(pearson_cor, cor(pred, true))
-    r_2 <- c(r_2, coefficient_of_determination(pred, true))
+    r_2 <- c(r_2, coefficient_of_determination(true, pred))
     rmseee <- c(rmseee, rmse(true, pred))
     maeee <- c(maeee, mae(true, pred))
   }
@@ -392,6 +392,7 @@ rf_reg <- function(data, order){
       which(xxx == max(xxx))
     }
   }
+
   paste('The optimal ntree is :', ntree_record[which(xxx == max(xxx))]) %>% print()
   paste('The optimal mtry is :', mtry_record[which(xxx == max(xxx))]) %>% print()
 
@@ -408,7 +409,7 @@ rf_reg <- function(data, order){
     pred = predict(mod4, newdata = test_data[,1:ncol(test_data) - 1]) %>% as.numeric()
     true = unlist(test_data[ncol(test_data)]) %>% as.numeric()
     pearson_cor <- c(pearson_cor, cor(pred, true))
-    r_2 <- c(r_2, coefficient_of_determination(pred, true))
+    r_2 <- c(r_2, coefficient_of_determination(true, pred))
     rmseee <- c(rmseee, rmse(true, pred))
     maeee <- c(maeee, mae(true, pred))
 
@@ -470,7 +471,7 @@ xgboost123 <- function(data, order){
         pred = predict(mod5, newdata = test_data[,1:ncol(test_data) - 1]) %>% as.matrix()
         true = unlist(test_data[,ncol(test_data)]) %>% as.numeric()
         pearson_cor <- c(pearson_cor, cor(pred, true))
-        xxx <- c(xxx, coefficient_of_determination(pred, true))
+        xxx <- c(xxx, coefficient_of_determination(true, pred))
         rmseee <- c(rmseee, rmse(true, pred))
         maeee <- c(maeee, mae(true, pred))
         eeta <- c(eeta, j) # eta
@@ -509,7 +510,7 @@ xgboost123 <- function(data, order){
     pred = predict(mod5, newdata = test_data[,1:ncol(test_data) - 1]) %>% as.matrix()
     true = unlist(test_data[,ncol(test_data)]) %>% as.numeric()
     pearson_cor <- c(pearson_cor, cor(pred, true))
-    r_2 <- c(r_2, coefficient_of_determination(pred, true))
+    r_2 <- c(r_2, coefficient_of_determination(true, pred))
     rmseee <- c(rmseee, rmse(true, pred))
     maeee <- c(maeee, mae(true, pred))
 
@@ -593,7 +594,7 @@ lightgbm123 <- function(data, order){
               true = unlist(test_data[,ncol(test_data)]) %>% as.numeric()
 
               pearson_cor <- c(pearson_cor, cor(pred, true))
-              xxx <- c(xxx, coefficient_of_determination(pred, true))
+              xxx <- c(xxx, coefficient_of_determination(true, pred))
               rmseee <- c(rmseee, rmse(true, pred))
               maeee <- c(maeee, mae(true, pred))
               depthh = c(depthh, i)
@@ -652,7 +653,7 @@ lightgbm123 <- function(data, order){
     pred = predict(model, as.matrix(test_data)[,-ncol(test_data)])
     true = unlist(test_data[,ncol(test_data)]) %>% as.numeric()
     pearson_cor <- c(pearson_cor, cor(pred, true))
-    r_2 <- c(r_2, coefficient_of_determination(pred, true))
+    r_2 <- c(r_2, coefficient_of_determination(true, pred))
     rmseee <- c(rmseee, rmse(true, pred))
     maeee <- c(maeee, mae(true, pred))
 
