@@ -40,7 +40,6 @@
 
 
 drop_na <- function(data, method){
-  data <- apply(data, 2, as.numeric)
   if (method == 'omit'){
     data <- data %>% na.omit()
   }
