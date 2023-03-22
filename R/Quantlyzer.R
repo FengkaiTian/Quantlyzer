@@ -101,7 +101,7 @@ data_into_five <- function(data){
 #'
 #' @export
 coefficient_of_determination <- function(true, pred){
-  rss <- sum((pred - mean(true)) ** 2)
+  rss <- sum((true - pred) ** 2)
   tss <- sum((true - mean(true)) ** 2)
   rsq <- 1 - (rss/tss)
   return(rsq)
@@ -1539,10 +1539,6 @@ all_reg_together_scaled <- function(data, pos_X, pos_y, method, trans_method){
 
 
 
-# try to use mtcars to be the classification example
-# remeber cyl as y
-# rf, xgboost, adaboost, svm, knn, naivebayes, done
-
 
 
 
@@ -2141,8 +2137,7 @@ print_result <- function(KNN_result, naive_result, svm_result, rf_result, xgb_re
 #'
 #' @export
 all_class_together <- function(data, pos_X, pos_y, method){
-  data <- data_selection(img, 2:8, 1, 'omit')
-
+  data <- data_selection(data, pos_X, pos_y, method)
   order = data_into_five(data)
   KNN_result <- class_KNN(data, order)
   naive_result <- class_naive(data, order)
