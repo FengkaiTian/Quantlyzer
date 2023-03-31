@@ -26,6 +26,7 @@
   library('adabag')
   library('autokeras')
   library("rgl")
+  library('irr')
 }
 
 
@@ -254,6 +255,7 @@ llm <- function(data, order){
   return(overall)
 }
 
+
 #######################################################
 #' My function description
 #'
@@ -466,7 +468,8 @@ xgboost123 <- function(data, order){
             lambda = k,
             eta = j,
             eval_metric = 'rmse',
-            subsample = 0.9
+            subsample = 0.9,
+            verbose = FALSE
           )
         pred = predict(mod5, newdata = test_data[,1:ncol(test_data) - 1]) %>% as.matrix()
         true = unlist(test_data[,ncol(test_data)]) %>% as.numeric()
@@ -505,7 +508,8 @@ xgboost123 <- function(data, order){
         lambda = lambdaa[which(xxx == max(xxx))],
         eta = eeta[which(xxx == max(xxx))],
         eval_metric = 'rmse',
-        subsample = 0.9
+        subsample = 0.9,
+        verbose = FALSE
       )
     pred = predict(mod5, newdata = test_data[,1:ncol(test_data) - 1]) %>% as.matrix()
     true = unlist(test_data[,ncol(test_data)]) %>% as.numeric()
@@ -1144,7 +1148,8 @@ xgboost_rg_scale <- function(data, order, trans_method){
             lambda = k,
             eta = j,
             eval_metric = 'rmse',
-            subsample = 0.9
+            subsample = 0.9,
+            verbose = FALSE
           )
         pred = predict(mod5, newdata = test_data) %>% as.matrix()
         true = test_label %>% as.numeric()
@@ -1195,7 +1200,8 @@ xgboost_rg_scale <- function(data, order, trans_method){
         lambda = lambdaa[which(xxx == max(xxx))],
         eta = eeta[which(xxx == max(xxx))],
         eval_metric = 'rmse',
-        subsample = 0.9
+        subsample = 0.9,
+        verbose = FALSE
       )
     pred = predict(mod5, newdata = test_data) %>% as.matrix()
     true = unlist(test_label) %>% as.numeric()
@@ -1536,14 +1542,6 @@ all_reg_together_scaled <- function(data, pos_X, pos_y, method, trans_method){
 
 
 
-
-
-
-
-
-
-
-
 #' My function description
 #'
 #' @export
@@ -1571,8 +1569,8 @@ kme_pca <- function(data){
 
 
   plot3d(tot$pc1, tot$pc2, tot$pc3,
-       col = data[,ncol(data)], size = 2, type = "s",
-       main = "True Value Based on First Three PCs ")
+         col = data[,ncol(data)], size = 2, type = "s",
+         main = "True Value Based on First Three PCs ")
   widget <- rglwidget()
   widget
 
@@ -1592,6 +1590,7 @@ class_KNN <- function(data, order){
   precision = c()
   recall = c()
   f1 = c()
+  kappa = c()
   for(i in 1:5){
     print(i)
     train_data = data[-unlist(order[i]),] %>% as.data.frame()
@@ -1607,6 +1606,8 @@ class_KNN <- function(data, order){
     precision <- rbind(precision, result_matrix$Precision)
     recall <- rbind(recall, result_matrix$Recall)
     f1 <- rbind(f1, result_matrix$F1)
+    kappa <- c(kappa, confusion_matrix$overall[2]) %>% as.numeric()
+
 
     paste('KNN Accuracy:', confusion_matrix$overall[1]) %>% print()
     print("      ")
@@ -1616,13 +1617,18 @@ class_KNN <- function(data, order){
     print("      ")
     print(" __________________________ ")
     print("      ")
+    paste('KNN kappa :', confusion_matrix$overall[2]) %>% print()
+    print(" __________________________ ")
+    print("      ")
     paste('KNN Class_Result : ') %>% print()
     result_matrix %>% print()
   }
   mean_f1 <- apply(f1, 2, mean) %>% matrix(nrow = 1)
   mean_recall <- apply(recall, 2, mean) %>% matrix(nrow = 1)
   mean_precition <- apply(precision, 2, mean) %>% matrix(nrow = 1)
-  mean_acc_p <- c(mean(acc), mean(p_value)) %>% matrix(nrow = 1)
+
+  mean_acc_p <- c(mean(acc), mean(p_value), mean(kappa)) %>% matrix(nrow = 1)
+
 
   overall_sum = list(mean_precition, mean_recall, mean_f1, mean_acc_p)
   return(overall_sum)
@@ -1639,6 +1645,7 @@ class_naive <- function(data, order){
   precision = c()
   recall = c()
   f1 = c()
+  kappa = c()
   for(i in 1:5){
     print(i)
     train_data = data[-unlist(order[5]),] %>% as.data.frame()
@@ -1654,6 +1661,7 @@ class_naive <- function(data, order){
     precision <- rbind(precision, result_matrix$Precision)
     recall <- rbind(recall, result_matrix$Recall)
     f1 <- rbind(f1, result_matrix$F1)
+    kappa <- c(kappa, confusion_matrix$overall[2]) %>% as.numeric()
 
     paste('Naive Bayes Accuracy :', confusion_matrix$overall[1]) %>% print()
     print("      ")
@@ -1663,13 +1671,16 @@ class_naive <- function(data, order){
     print("      ")
     print(" __________________________ ")
     print("      ")
+    paste('NB kappa :', confusion_matrix$overall[2]) %>% print()
+    print(" __________________________ ")
+    print("      ")
     paste('Naive Bayes Class_Result : ') %>% print()
     result_matrix %>% print()
   }
   mean_f1 <- apply(f1, 2, mean) %>% matrix(nrow = 1)
   mean_recall <- apply(recall, 2, mean) %>% matrix(nrow = 1)
   mean_precition <- apply(precision, 2, mean) %>% matrix(nrow = 1)
-  mean_acc_p <- c(mean(acc), mean(p_value)) %>% matrix(nrow = 1)
+  mean_acc_p <- c(mean(acc), mean(p_value), mean(kappa)) %>% matrix(nrow = 1)
 
   overall_sum = list(mean_precition, mean_recall, mean_f1, mean_acc_p)
   return(overall_sum)
@@ -1686,6 +1697,7 @@ class_svm <- function(data, order){
   precision = c()
   recall = c()
   f1 = c()
+  kappa = c()
   for(i in 1:5){
     print(i)
     train_data = data[-unlist(order[i]),] %>% as.data.frame()
@@ -1702,6 +1714,7 @@ class_svm <- function(data, order){
     precision <- rbind(precision, result_matrix$Precision)
     recall <- rbind(recall, result_matrix$Recall)
     f1 <- rbind(f1, result_matrix$F1)
+    kappa <- c(kappa, confusion_matrix$overall[2]) %>% as.numeric()
 
     paste('SVM Accuracy :', confusion_matrix$overall[1]) %>% print()
     print("      ")
@@ -1711,13 +1724,16 @@ class_svm <- function(data, order){
     print("      ")
     print(" __________________________ ")
     print("      ")
+    paste('SVM kappa :', confusion_matrix$overall[2]) %>% print()
+    print(" __________________________ ")
+    print("      ")
     paste('SVM Class_Result : ') %>% print()
     result_matrix %>% print()
   }
   mean_f1 <- apply(f1, 2, mean) %>% matrix(nrow = 1)
   mean_recall <- apply(recall, 2, mean) %>% matrix(nrow = 1)
   mean_precition <- apply(precision, 2, mean) %>% matrix(nrow = 1)
-  mean_acc_p <- c(mean(acc), mean(p_value)) %>% matrix(nrow = 1)
+  mean_acc_p <- c(mean(acc), mean(p_value), mean(kappa)) %>% matrix(nrow = 1)
 
   overall_sum = list(mean_precition, mean_recall, mean_f1, mean_acc_p)
   return(overall_sum)
@@ -1760,6 +1776,7 @@ class_rf <- function(data, order){
   precision = c()
   recall = c()
   f1 = c()
+  kappa = c()
   for(i in 1:5){
     print(i)
     train_data = data[-unlist(order[i]),] %>% as.data.frame()
@@ -1777,6 +1794,7 @@ class_rf <- function(data, order){
     precision <- rbind(precision, result_matrix$Precision)
     recall <- rbind(recall, result_matrix$Recall)
     f1 <- rbind(f1, result_matrix$F1)
+    kappa <- c(kappa, confusion_matrix$overall[2]) %>% as.numeric()
 
     paste('Random Forest Accuracy :', confusion_matrix$overall[1]) %>% print()
     print("      ")
@@ -1786,13 +1804,16 @@ class_rf <- function(data, order){
     print("      ")
     print(" __________________________ ")
     print("      ")
+    paste('RF kappa :', confusion_matrix$overall[2]) %>% print()
+    print(" __________________________ ")
+    print("      ")
     paste('Random Forest Class_Result : ') %>% print()
     result_matrix %>% print()
   }
   mean_f1 <- apply(f1, 2, mean) %>% matrix(nrow = 1)
   mean_recall <- apply(recall, 2, mean) %>% matrix(nrow = 1)
   mean_precition <- apply(precision, 2, mean) %>% matrix(nrow = 1)
-  mean_acc_p <- c(mean(acc), mean(p_value)) %>% matrix(nrow = 1)
+  mean_acc_p <- c(mean(acc), mean(p_value), mean(kappa)) %>% matrix(nrow = 1)
 
   overall_sum = list(mean_precition, mean_recall, mean_f1, mean_acc_p)
   return(overall_sum)
@@ -1837,7 +1858,8 @@ xgboost123 <- function(data, order){
             max_depth = i,
             lambda = k,
             eta = j,
-            subsample = 0.9
+            subsample = 0.9,
+            verbose = FALSE
           )
         pred = predict(mod_xg, newdata = test_data[,1:ncol(test_data) - 1], reshape = TRUE)
         pred = as.data.frame(pred)
@@ -1862,6 +1884,7 @@ xgboost123 <- function(data, order){
   precision = c()
   recall = c()
   f1 = c()
+  kappa = c()
 
   for(i in 1:5){
     print(i)
@@ -1878,7 +1901,8 @@ xgboost123 <- function(data, order){
         max_depth = lambdaa[which(xxx == max(xxx))],
         lambda = lambdaa[which(xxx == max(xxx))],
         eta = eeta[which(xxx == max(xxx))],
-        subsample = 0.9
+        subsample = 0.9,
+        verbose = FALSE
       )
     pred = predict(mod_xg, newdata = test_data[,1:ncol(test_data) - 1], reshape = TRUE)
     pred = as.data.frame(pred)
@@ -1891,22 +1915,26 @@ xgboost123 <- function(data, order){
     precision <- rbind(precision, result_matrix$Precision)
     recall <- rbind(recall, result_matrix$Recall)
     f1 <- rbind(f1, result_matrix$F1)
+    kappa <- c(kappa, confusion_matrix$overall[2]) %>% as.numeric()
 
-    paste('Random Forest Accuracy :', confusion_matrix$overall[1]) %>% print()
+    paste('xgb Accuracy :', confusion_matrix$overall[1]) %>% print()
     print("      ")
     print(" __________________________ ")
     print("      ")
-    paste('Random Forest p_value :', confusion_matrix$overall[6]) %>% print()
+    paste('xgb p_value :', confusion_matrix$overall[6]) %>% print()
     print("      ")
     print(" __________________________ ")
     print("      ")
-    paste('Random Forest Class_Result : ') %>% print()
+    paste('xgb :', confusion_matrix$overall[2]) %>% print()
+    print(" __________________________ ")
+    print("      ")
+    paste('xgb Class_Result : ') %>% print()
     result_matrix %>% print()
   }
   mean_f1 <- apply(f1, 2, mean) %>% matrix(nrow = 1)
   mean_recall <- apply(recall, 2, mean) %>% matrix(nrow = 1)
   mean_precition <- apply(precision, 2, mean) %>% matrix(nrow = 1)
-  mean_acc_p <- c(mean(acc), mean(p_value)) %>% matrix(nrow = 1)
+  mean_acc_p <- c(mean(acc), mean(p_value), mean(kappa)) %>% matrix(nrow = 1)
 
   overall_sum = list(mean_precition, mean_recall, mean_f1, mean_acc_p)
   return(overall_sum)
@@ -1942,6 +1970,7 @@ class_adabst <- function(data, order){
   precision = c()
   recall = c()
   f1 = c()
+  kappa = c()
   for(i in 1:5){
     print(i)
     train_data = data[-unlist(order[5]),] %>% as.data.frame()
@@ -1959,6 +1988,7 @@ class_adabst <- function(data, order){
     precision <- rbind(precision, result_matrix$Precision)
     recall <- rbind(recall, result_matrix$Recall)
     f1 <- rbind(f1, result_matrix$F1)
+    kappa <- c(kappa, confusion_matrix$overall[2]) %>% as.numeric()
 
     paste('Adaboost Accuracy :', confusion_matrix$overall[1]) %>% print()
     print("      ")
@@ -1968,13 +1998,16 @@ class_adabst <- function(data, order){
     print("      ")
     print(" __________________________ ")
     print("      ")
+    paste('Adaboost kappa :', confusion_matrix$overall[2]) %>% print()
+    print(" __________________________ ")
+    print("      ")
     paste('Adaboost Class_Result : ') %>% print()
     result_matrix %>% print()
   }
   mean_f1 <- apply(f1, 2, mean) %>% matrix(nrow = 1)
   mean_recall <- apply(recall, 2, mean) %>% matrix(nrow = 1)
   mean_precition <- apply(precision, 2, mean) %>% matrix(nrow = 1)
-  mean_acc_p <- c(mean(acc), mean(p_value)) %>% matrix(nrow = 1)
+  mean_acc_p <- c(mean(acc), mean(p_value), mean(kappa)) %>% matrix(nrow = 1)
 
   overall_sum = list(mean_precition, mean_recall, mean_f1, mean_acc_p)
   return(overall_sum)
@@ -1994,6 +2027,7 @@ tree_stat2 <- function(data){
 # tree
 ##########################################################
 
+
 #' My function description
 #'
 #' @export
@@ -2004,6 +2038,7 @@ keras_class <- function(data, order){
   precision = c()
   recall = c()
   f1 = c()
+  kappa = c()
   for(i in 1:5){
     print(i)
     train_data = data[-unlist(order[i]),] %>% as.data.frame()
@@ -2032,6 +2067,7 @@ keras_class <- function(data, order){
     precision <- rbind(precision, result_matrix$Precision)
     recall <- rbind(recall, result_matrix$Recall)
     f1 <- rbind(f1, result_matrix$F1)
+    kappa <- c(kappa, confusion_matrix$overall[2]) %>% as.numeric()
 
     paste('Keras_Class Accuracy :', confusion_matrix$overall[1]) %>% print()
     print("      ")
@@ -2041,13 +2077,16 @@ keras_class <- function(data, order){
     print("      ")
     print(" __________________________ ")
     print("      ")
+    paste('Keras kappa :', confusion_matrix$overall[2]) %>% print()
+    print(" __________________________ ")
+    print("      ")
     paste('Keras_Class Class_Result : ') %>% print()
     result_matrix %>% print()
   }
   mean_f1 <- apply(f1, 2, mean) %>% matrix(nrow = 1)
   mean_recall <- apply(recall, 2, mean) %>% matrix(nrow = 1)
   mean_precition <- apply(precision, 2, mean) %>% matrix(nrow = 1)
-  mean_acc_p <- c(mean(acc), mean(p_value)) %>% matrix(nrow = 1)
+  mean_acc_p <- c(mean(acc), mean(p_value), mean(kappa)) %>% matrix(nrow = 1)
 
   overall_sum = list(mean_precition, mean_recall, mean_f1, mean_acc_p)
   return(overall_sum)
@@ -2063,7 +2102,7 @@ keras_class <- function(data, order){
 print_result <- function(KNN_result, naive_result, svm_result, rf_result, xgb_result, adab_result, keras_result ){
   # build a empty data frame to save the result
   acc_and_p <- matrix(ncol = 2, nrow = 0)
-  colnames(acc_and_p) <- c('Accuracy', 'p-value')
+  colnames(acc_and_p) <- c('Accuracy', 'p-value', 'Kappa')
   acc_and_p <- rbind(acc_and_p, unlist(KNN_result[4]))
   acc_and_p <- rbind(acc_and_p, unlist(naive_result[4]))
   acc_and_p <- rbind(acc_and_p, unlist(svm_result[4]))
@@ -2167,7 +2206,7 @@ class_KNN_scale <- function(data, order, trans_method){
   precision = c()
   recall = c()
   f1 = c()
-
+  kappa = c()
   for(i in 1:5){
     print(i)
     train_data = data[-unlist(order[i]),]
@@ -2196,6 +2235,7 @@ class_KNN_scale <- function(data, order, trans_method){
     precision <- rbind(precision, result_matrix$Precision)
     recall <- rbind(recall, result_matrix$Recall)
     f1 <- rbind(f1, result_matrix$F1)
+    kappa <- c(kappa, confusion_matrix$overall[2]) %>% as.numeric()
 
     confusion_matrix$overall
 
@@ -2207,13 +2247,16 @@ class_KNN_scale <- function(data, order, trans_method){
     print("      ")
     print(" __________________________ ")
     print("      ")
+    paste('KNN kappa :', confusion_matrix$overall[2]) %>% print()
+    print(" __________________________ ")
+    print("      ")
     paste('KNN Class_Result : ') %>% print()
     result_matrix %>% print()
   }
   mean_f1 <- apply(f1, 2, mean) %>% matrix(nrow = 1)
   mean_recall <- apply(recall, 2, mean) %>% matrix(nrow = 1)
   mean_precition <- apply(precision, 2, mean) %>% matrix(nrow = 1)
-  mean_acc_p <- c(mean(acc), mean(p_value)) %>% matrix(nrow = 1)
+  mean_acc_p <- c(mean(acc), mean(p_value), mean(kappa)) %>% matrix(nrow = 1)
 
   overall_sum = list(mean_precition, mean_recall, mean_f1, mean_acc_p)
   return(overall_sum)
@@ -2232,6 +2275,7 @@ class_naive_scale <- function(data, order, trans_method){
   precision = c()
   recall = c()
   f1 = c()
+  kappa = c()
   for(i in 1:5){
     print(i)
     train_data = data[-unlist(order[i]),]
@@ -2256,6 +2300,7 @@ class_naive_scale <- function(data, order, trans_method){
     precision <- rbind(precision, result_matrix$Precision)
     recall <- rbind(recall, result_matrix$Recall)
     f1 <- rbind(f1, result_matrix$F1)
+    kappa <- c(kappa, confusion_matrix$overall[2]) %>% as.numeric()
 
     paste('Naive Bayes Accuracy :', confusion_matrix$overall[1]) %>% print()
     print("      ")
@@ -2265,13 +2310,16 @@ class_naive_scale <- function(data, order, trans_method){
     print("      ")
     print(" __________________________ ")
     print("      ")
+    paste('NB kappa :', confusion_matrix$overall[2]) %>% print()
+    print(" __________________________ ")
+    print("      ")
     paste('Naive Bayes Class_Result : ') %>% print()
     result_matrix %>% print()
   }
   mean_f1 <- apply(f1, 2, mean) %>% matrix(nrow = 1)
   mean_recall <- apply(recall, 2, mean) %>% matrix(nrow = 1)
   mean_precition <- apply(precision, 2, mean) %>% matrix(nrow = 1)
-  mean_acc_p <- c(mean(acc), mean(p_value)) %>% matrix(nrow = 1)
+  mean_acc_p <- c(mean(acc), mean(p_value), mean(kappa)) %>% matrix(nrow = 1)
 
   overall_sum = list(mean_precition, mean_recall, mean_f1, mean_acc_p)
   return(overall_sum)
@@ -2290,6 +2338,7 @@ class_svm_scale <- function(data, order, trans_method){
   precision = c()
   recall = c()
   f1 = c()
+  kappa = c()
   for(i in 1:5){
 
     print(i)
@@ -2317,6 +2366,7 @@ class_svm_scale <- function(data, order, trans_method){
     precision <- rbind(precision, result_matrix$Precision)
     recall <- rbind(recall, result_matrix$Recall)
     f1 <- rbind(f1, result_matrix$F1)
+    kappa <- c(kappa, confusion_matrix$overall[2]) %>% as.numeric()
 
     paste('SVM Accuracy :', confusion_matrix$overall[1]) %>% print()
     print("      ")
@@ -2326,13 +2376,16 @@ class_svm_scale <- function(data, order, trans_method){
     print("      ")
     print(" __________________________ ")
     print("      ")
+    paste('SVM kappa :', confusion_matrix$overall[2]) %>% print()
+    print(" __________________________ ")
+    print("      ")
     paste('SVM Class_Result : ') %>% print()
     result_matrix %>% print()
   }
   mean_f1 <- apply(f1, 2, mean) %>% matrix(nrow = 1)
   mean_recall <- apply(recall, 2, mean) %>% matrix(nrow = 1)
   mean_precition <- apply(precision, 2, mean) %>% matrix(nrow = 1)
-  mean_acc_p <- c(mean(acc), mean(p_value)) %>% matrix(nrow = 1)
+  mean_acc_p <- c(mean(acc), mean(p_value), mean(kappa)) %>% matrix(nrow = 1)
 
   overall_sum = list(mean_precition, mean_recall, mean_f1, mean_acc_p)
   return(overall_sum)
@@ -2386,6 +2439,7 @@ class_rf_scale <- function(data, order,trans_method){
   precision = c()
   recall = c()
   f1 = c()
+  kappa = c()
   for(i in 1:5){
     modd = randomForest(as.factor(train_label)  ~ ., data = train_data,
                         ntree = ntree_record[which(xxx == max(xxx))][1], mtry =mtry_record[which(xxx == max(xxx))][1], importance = TRUE)
@@ -2400,6 +2454,7 @@ class_rf_scale <- function(data, order,trans_method){
     precision <- rbind(precision, result_matrix$Precision)
     recall <- rbind(recall, result_matrix$Recall)
     f1 <- rbind(f1, result_matrix$F1)
+    kappa <- c(kappa, confusion_matrix$overall[2]) %>% as.numeric()
 
     paste('Random Forest Accuracy :', confusion_matrix$overall[1]) %>% print()
     print("      ")
@@ -2409,13 +2464,16 @@ class_rf_scale <- function(data, order,trans_method){
     print("      ")
     print(" __________________________ ")
     print("      ")
+    paste('RF kappa :', confusion_matrix$overall[2]) %>% print()
+    print(" __________________________ ")
+    print("      ")
     paste('Random Forest Class_Result : ') %>% print()
     result_matrix %>% print()
   }
   mean_f1 <- apply(f1, 2, mean) %>% matrix(nrow = 1)
   mean_recall <- apply(recall, 2, mean) %>% matrix(nrow = 1)
   mean_precition <- apply(precision, 2, mean) %>% matrix(nrow = 1)
-  mean_acc_p <- c(mean(acc), mean(p_value)) %>% matrix(nrow = 1)
+  mean_acc_p <- c(mean(acc), mean(p_value), mean(kappa)) %>% matrix(nrow = 1)
 
   overall_sum = list(mean_precition, mean_recall, mean_f1, mean_acc_p)
   return(overall_sum)
@@ -2483,7 +2541,8 @@ xgboost_scale <- function(data, order,trans_method){
             max_depth = i,
             lambda = k,
             eta = j,
-            subsample = 0.9
+            subsample = 0.9,
+            verbose = FALSE
           )
         pred = predict(mod_xg, newdata = test_data, reshape = TRUE)
         pred = as.data.frame(pred)
@@ -2507,7 +2566,7 @@ xgboost_scale <- function(data, order,trans_method){
   precision = c()
   recall = c()
   f1 = c()
-
+  kappa = c()
   for(i in 1:5){
     print(i)
     train_data = data[-unlist(order[i]),]
@@ -2534,7 +2593,8 @@ xgboost_scale <- function(data, order,trans_method){
         max_depth = lambdaa[which(xxx == max(xxx))],
         lambda = lambdaa[which(xxx == max(xxx))],
         eta = eeta[which(xxx == max(xxx))],
-        subsample = 0.9
+        subsample = 0.9,
+        verbose = FALSE
       )
     pred = predict(mod_xg, newdata = test_data, reshape = TRUE)
     pred = as.data.frame(pred)
@@ -2547,6 +2607,7 @@ xgboost_scale <- function(data, order,trans_method){
     precision <- rbind(precision, result_matrix$Precision)
     recall <- rbind(recall, result_matrix$Recall)
     f1 <- rbind(f1, result_matrix$F1)
+    kappa <- c(kappa, confusion_matrix$overall[2]) %>% as.numeric()
 
     paste('XGB Accuracy :', confusion_matrix$overall[1]) %>% print()
     print("      ")
@@ -2556,13 +2617,16 @@ xgboost_scale <- function(data, order,trans_method){
     print("      ")
     print(" __________________________ ")
     print("      ")
+    paste('XGB kappa :', confusion_matrix$overall[2]) %>% print()
+    print(" __________________________ ")
+    print("      ")
     paste('XGB Class_Result : ') %>% print()
     result_matrix %>% print()
   }
   mean_f1 <- apply(f1, 2, mean) %>% matrix(nrow = 1)
   mean_recall <- apply(recall, 2, mean) %>% matrix(nrow = 1)
   mean_precition <- apply(precision, 2, mean) %>% matrix(nrow = 1)
-  mean_acc_p <- c(mean(acc), mean(p_value)) %>% matrix(nrow = 1)
+  mean_acc_p <- c(mean(acc), mean(p_value), mean(kappa)) %>% matrix(nrow = 1)
 
   overall_sum = list(mean_precition, mean_recall, mean_f1, mean_acc_p)
   return(overall_sum)
@@ -2609,6 +2673,7 @@ class_adabst_scale <- function(data, order, trans_method){
   precision = c()
   recall = c()
   f1 = c()
+  kappa = c()
   for(i in 1:5){
     print(i)
     train_data = data[-unlist(order[i]),]
@@ -2633,6 +2698,7 @@ class_adabst_scale <- function(data, order, trans_method){
     precision <- rbind(precision, result_matrix$Precision)
     recall <- rbind(recall, result_matrix$Recall)
     f1 <- rbind(f1, result_matrix$F1)
+    kappa <- c(kappa, confusion_matrix$overall[2]) %>% as.numeric()
 
     paste('Adaboost Accuracy :', confusion_matrix$overall[1]) %>% print()
     print("      ")
@@ -2642,13 +2708,16 @@ class_adabst_scale <- function(data, order, trans_method){
     print("      ")
     print(" __________________________ ")
     print("      ")
+    paste('Adaboost kappa :', confusion_matrix$overall[2]) %>% print()
+    print(" __________________________ ")
+    print("      ")
     paste('Adaboost Class_Result : ') %>% print()
     result_matrix %>% print()
   }
   mean_f1 <- apply(f1, 2, mean) %>% matrix(nrow = 1)
   mean_recall <- apply(recall, 2, mean) %>% matrix(nrow = 1)
   mean_precition <- apply(precision, 2, mean) %>% matrix(nrow = 1)
-  mean_acc_p <- c(mean(acc), mean(p_value)) %>% matrix(nrow = 1)
+  mean_acc_p <- c(mean(acc), mean(p_value), mean(kappa)) %>% matrix(nrow = 1)
 
   overall_sum = list(mean_precition, mean_recall, mean_f1, mean_acc_p)
   return(overall_sum)
@@ -2667,6 +2736,7 @@ keras_class_scale <- function(data, order, trans_method){
   precision = c()
   recall = c()
   f1 = c()
+  kappa = c()
   for(i in 1:5){
     train_data = data[-unlist(order[i]),]
     train_label = train_data[,ncol(train_data)]
@@ -2707,6 +2777,7 @@ keras_class_scale <- function(data, order, trans_method){
     precision <- rbind(precision, result_matrix$Precision)
     recall <- rbind(recall, result_matrix$Recall)
     f1 <- rbind(f1, result_matrix$F1)
+    kappa <- c(kappa, confusion_matrix$overall[2]) %>% as.numeric()
 
     paste('Keras_Class Accuracy :', confusion_matrix$overall[1]) %>% print()
     print("      ")
@@ -2716,13 +2787,16 @@ keras_class_scale <- function(data, order, trans_method){
     print("      ")
     print(" __________________________ ")
     print("      ")
+    paste('Keras_Class kappa :', confusion_matrix$overall[2]) %>% print()
+    print(" __________________________ ")
+    print("      ")
     paste('Keras_Class Class_Result : ') %>% print()
     result_matrix %>% print()
   }
   mean_f1 <- apply(f1, 2, mean) %>% matrix(nrow = 1)
   mean_recall <- apply(recall, 2, mean) %>% matrix(nrow = 1)
   mean_precition <- apply(precision, 2, mean) %>% matrix(nrow = 1)
-  mean_acc_p <- c(mean(acc), mean(p_value)) %>% matrix(nrow = 1)
+  mean_acc_p <- c(mean(acc), mean(p_value), mean(kappa)) %>% matrix(nrow = 1)
 
   overall_sum = list(mean_precition, mean_recall, mean_f1, mean_acc_p)
   return(overall_sum)
@@ -2736,8 +2810,8 @@ keras_class_scale <- function(data, order, trans_method){
 #' @export
 print_result <- function(KNN_result, naive_result, svm_result, rf_result, xgb_result, adab_result, keras_result){
   # build a empty data frame to save the result
-  acc_and_p <- matrix(ncol = 2, nrow = 0)
-  colnames(acc_and_p) <- c('Accuracy', 'p-value')
+  acc_and_p <- matrix(ncol = 3, nrow = 0)
+  colnames(acc_and_p) <- c('Accuracy', 'p-value', 'kappa')
   acc_and_p <- rbind(acc_and_p, unlist(KNN_result[4]))
   acc_and_p <- rbind(acc_and_p, unlist(naive_result[4]))
   acc_and_p <- rbind(acc_and_p, unlist(svm_result[4]))
@@ -2851,19 +2925,3 @@ stat_ml <- function(data, pos_X, pos_y, objective, na_method, scale_method = NUL
   return(results)
   print(time_diff)
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
