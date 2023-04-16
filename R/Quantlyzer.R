@@ -30,14 +30,18 @@
 }
 
 
-
-
 .onLoad()
 
 
 #' My function description
 #'
 #' @export
+
+get_info(mtcars)
+dist_plot(mtcars)
+
+
+
 
 
 drop_na <- function(data, method){
@@ -108,13 +112,12 @@ coefficient_of_determination <- function(true, pred){
 }
 
 
-
 #' My function description
 #'
 #' @export
 dist_plot <- function(data){
   print("HIST PLOT; Factor Var ONLY")
-  new_data = data2[,which(sapply(data2, is.factor))]
+  new_data = data[,which(sapply(data, function(x) is.factor(x) | is.character(x)))] %>% as.data.frame()
   for(i in 1:ncol(new_data)){
     print(ggplot(data = new_data, aes(x = factor(new_data[[i]]), fill = new_data[[i]])) +
             geom_bar() +
@@ -158,22 +161,24 @@ violin_plot <- function(data){
 #'
 #' @export
 visual_summary1 <- function(data){
+  data1 <- data
+  data = data[,which(sapply(data, function(x) is.numeric(x)))] %>% as.data.frame()
   fake_data <- apply(data, 2, as.numeric)
   fake_data_get_nonnum <- which(apply(fake_data, 2, is.na)  == TRUE, arr.ind = TRUE)
   if(nrow(fake_data_get_nonnum) == 0){
     print(violin_plot(fake_data))
     corrplot(cor(fake_data), method = 'pie', type = "upper", order = "hclust",
              tl.col = "black", tl.srt = 45)
+    print(dist_plot(data1))
   } else {
     non_numerical_data <- data[,unique(fake_data_get_nonnum[,2])]
     numerical_data <- data[,-unique(fake_data_get_nonnum[,2])]
-    print(dist_plot(non_numerical_data))
+    print(dist_plot(data1))
     print(violin_plot(numerical_data))
     corrplot(cor(numerical_data), method = 'pie', type = "upper", order = "hclust",
              tl.col = "black", tl.srt = 45)
   }
 }
-
 
 
 #' My function description
@@ -455,7 +460,7 @@ xgboost123 <- function(data, order){
   train_data = mod5_data[oooorder,] %>% as.matrix()
   test_data = mod5_data[-oooorder,] %>% as.matrix()
   for(i in seq(3,11,2)){
-    for(j in c(0.05, 0.1, 0.15)){
+    for(j in c(0.0005, 0.001, 0.0015)){
       for(k in c(1,2)){
         mod5 <-
           xgboost(
@@ -1135,7 +1140,7 @@ xgboost_rg_scale <- function(data, order, trans_method){
   test_data = predict(trans_model, test_data)  %>% as.matrix()
 
   for(i in seq(3,11,2)){
-    for(j in c(0.05, 0.1, 0.15)){
+    for(j in c(0.0005, 0.001, 0.0015)){
       for(k in c(1,2)){
         mod5 <-
           xgboost(
@@ -1845,7 +1850,7 @@ xgboost123 <- function(data, order){
   test_data = data[-oooorder,] %>% as.matrix()
   lv = levels(as.factor(unlist(data[ncol(data)])))
   for(i in seq(3,11,2)){
-    for(j in c(0.05, 0.1, 0.15)){
+    for(j in c(0.0005, 0.001, 0.0015)){
       for(k in c(1,2)){
         mod_xg <-
           xgboost(
@@ -2528,7 +2533,7 @@ xgboost_scale <- function(data, order,trans_method){
 
   lv = levels(as.factor(unlist(data[ncol(data)])))
   for(i in seq(3,11,2)){
-    for(j in c(0.05, 0.1, 0.15)){
+    for(j in c(0.0005, 0.001, 0.0015)){
       for(k in c(1,2)){
         mod_xg <-
           xgboost(
