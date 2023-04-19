@@ -1250,7 +1250,7 @@ lightgbm_rg_scale <- function(data, order, trans_method){
   boost = c()
 
   for(i in c(1, 3, 4, 5, 6, 7)){ # depth
-    for (j in c(0.05, 0.1, 0.15)){ # lr
+    for (j in c(0.005, 0.001, 0.0015)){ # lr
       for (k in c(2,4,8,16,32)){ # num_leaves
         for (a in c(0.8, 1.0)){ #feature_frac
           for (c in c(0.8, 0.9, 1.0)){ #bagging_frac
