@@ -9,4 +9,4 @@ Quantlyzer: An R package for Automated Exploratory and Predictive Data Analysis
 🐅🐅🐅🐅🐅🐅🐅🐅🐅🐅🐅🐅🐅🐅🐅🐅🐅🐅🐅🐅🐅🐅🐅🐅🐅🐅🐅🐅🐅🐅🐅🐅🐅🐅🐅🐅🐅🐅🐅🐅🐅🐅🐅
 
 
-if you like it, star plz, thanks a lot
+Regarding how to use it, check documentation or contact me.
