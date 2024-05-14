@@ -81,10 +81,10 @@ data_into_five <- function(data){
                            first_4[5]:nrow(data))
   return(divid_5_position)
 }
-coefficient_of_determination <- function(true, pred){
-  rss <- sum((pred - mean(true)) ** 2)
-  tss <- sum((true - mean(true)) ** 2)
-  rsq <- 1 - (rss/tss)
+coefficient_of_determination <- function(true, pred) {
+  rss <- sum((true - pred)^2)  
+  tss <- sum((true - mean(true))^2)  
+  rsq <- 1 - (rss / tss)
   return(rsq)
 }
 
